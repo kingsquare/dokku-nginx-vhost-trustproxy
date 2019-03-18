@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+source "$PLUGIN_AVAILABLE_PATH/nginx-vhost-trustproxy/internal-functions"
+
+[[ " $(nginx-vhost-trustproxy-plugin-name):help help " == *" $1 "* ]] || exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/config/functions"
+source "$PLUGIN_AVAILABLE_PATH/config/functions"
+
+case "$1" in
+  help | $(nginx-vhost-trustproxy-plugin-name):help)
+    $(nginx-vhost-trustproxy-plugin-cmd-prefix)-help "$@"
+   ;;
+  *)
+    exit $DOKKU_NOT_IMPLEMENTED_EXIT
+    ;;
+
+esac

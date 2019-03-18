@@ -1,0 +1,4 @@
+[plugin]
+description = "dokku nginx-vhost-trustproxy plugin"
+version = "0.0.1-alpha1"
+[plugin.config]

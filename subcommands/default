@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_AVAILABLE_PATH/nginx-vhost-trustproxy/internal-functions"
+
+nginx-vhost-trustproxy-help "nginx-vhost-trustproxy:help"

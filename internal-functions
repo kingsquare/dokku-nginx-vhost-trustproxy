@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+nginx-vhost-trustproxy-plugin-name() {
+   echo "nginx-vhost-trustproxy"
+}
+
+nginx-vhost-trustproxy-plugin-cmd-prefix() {
+  # TODO replace with a sed?
+  echo "nginx-vhost-trustproxy"
+}
+
+nginx-vhost-trustproxy-help-content() {
+  local PLUGIN_NAME=$(nginx-vhost-trustproxy-plugin-name)
+  declare desc="return nginx plugin help content"
+  cat <<help_content
+    ${PLUGIN_NAME}:enable <app> [depth], Enable trustproxy the depth is the number of hops to trust (default 1)
+    ${PLUGIN_NAME}:disable <app>, Disable trustproxy (i..e default dokku behaviour)
+    ${PLUGIN_NAME}:status <app>, Show if trustproxy is enabled/disabled
+help_content
+}
+
+nginx-vhost-trustproxy-help() {
+  local PLUGIN_NAME=$(nginx-vhost-trustproxy-plugin-name)
+  local CMD_PREFIX=$(nginx-vhost-trustproxy-plugin-name)
+  local HELP_CMD=$(nginx-vhost-trustproxy-plugin-name)-help-content
+  if [[ $1 == "${PLUGIN_NAME}:help" ]]; then
+    echo -e 'Usage: dokku ${PLUGIN_NAME}[:COMMAND]'
+    echo ''
+    echo 'Configure nginx vhost's trustproxy
+    echo ''
+    echo 'Additional commands:'
+    ${HELP_CMD} | sort | column -c2 -t -s,
+  elif [[ $(ps -o command= $PPID) == *"--all"* ]]; then
+    ${HELP_CMD}
+  else
+    cat <<help_desc
+    ${PLUGIN_NAME}, Plugin for managing trustproxy for nginx-vhosts
+help_desc
+  fi
+}
