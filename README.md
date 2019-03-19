@@ -1,5 +1,5 @@
 [![DOKKU](https://img.shields.io/badge/DOKKU->=0.4.x-success.svg)](http://dokku.viewdocs.io/dokku/development/plugin-creation/)
-[Balzing Fast](https://img.shields.io/badge/Blazing-Fast-success.svg)
+[![Blazing Fast](https://img.shields.io/badge/Blazing-Fast-success.svg)](https://twitter.com/acdlite/status/974390255393505280)
 
 # dokku-nginx-vhost-trustproxy
 
