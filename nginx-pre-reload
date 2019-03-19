@@ -4,36 +4,24 @@ set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 source "$PLUGIN_AVAILABLE_PATH/config/functions"
 
-#
-# Two choices;
-#
-# 1. replace strings in the already generated /home/dokku/APP/nginx.conf
-# 2. add a conf to /home/dokku/app/nginx.conf.d/ to override the default config in /home/dokku/APP/nginx.conf
-#
-# Currently we do the second...
-#
-
 nginx-vhost-trustproxy-hook-nginx-pre-reload() {
   [[ -z $1 ]] && dokku_log_fail "Please specify an app to run the command on"
   verify_app_name "$1"
   local APP="$1";
 
-  local VHOST_NGINX_CONFD_PATH="$DOKKU_ROOT/$APP/nginx.conf.d"
-
   TRUSTPROXY=$(config_get $APP NGINX_VHOST_TRUSTPROXY)
   if [[ "$TRUSTPROXY" = "" ]]; then
-    # breakout aahaaa
-    rm ${VHOST_NGINX_CONFD_PATH}/trustproxy.conf
+    # revert back to the original
+    sed -i 's/proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto/proxy_set_header X-Forwarded-Proto $scheme/g' $DOKKU_ROOT/$APP/nginx.conf
+    sed -i 's/proxy_set_header X-Forwarded-For $http_x_forwarded_for/proxy_set_header X-Forwarded-For $remote_addr/g' $DOKKU_ROOT/$APP/nginx.conf
+    sed -i 's/proxy_set_header X-Forwarded-Port $http_x_forwarded_porto/proxy_set_header X-Forwarded-Port $server_port/g' $DOKKU_ROOT/$APP/nginx.conf
     exit 0;
   fi
 
   dokku_log_info1 "Adding nginx-vhost-trustproxy configuration for app ($APP)."
-
-  # TODO find out is this directory just not created on old dokku?
-  if [[ ! -d ${VHOST_NGINX_CONFD_PATH} ]]; then
-    mkdir ${VHOST_NGINX_CONFD_PATH}
-  fi
-  sigil -f $PLUGIN_AVAILABLE_PATH/nginx-vhost-trustproxy/templates/trustproxy.conf.sigil > ${VHOST_NGINX_CONFD_PATH}/trustproxy.conf
+  sed -i 's/proxy_set_header X-Forwarded-Proto $scheme/proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto/g' $DOKKU_ROOT/$APP/nginx.conf
+  sed -i 's/proxy_set_header X-Forwarded-For $remote_addr/proxy_set_header X-Forwarded-For $http_x_forwarded_for/g' $DOKKU_ROOT/$APP/nginx.conf
+  sed -i 's/proxy_set_header X-Forwarded-Port $server_port/proxy_set_header X-Forwarded-Port $http_x_forwarded_porto/g' $DOKKU_ROOT/$APP/nginx.conf
 }
 
 nginx-vhost-trustproxy-hook-nginx-pre-reload $@
