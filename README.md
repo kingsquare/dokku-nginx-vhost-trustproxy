@@ -27,6 +27,11 @@ Your app will be able to access the environment `NGINX_VHOST_TRUSTPROXY`. The va
 ### node / express
 In your application you will have to use some kind of `trust proxy` to use the "correct" IP as the client IP. For example the `trust proxy` setting in [expressjs](https://expressjs.com/en/guide/behind-proxies.html). If you are not using express see the implementation in [proxy-addr](https://www.npmjs.com/package/proxy-addr). For other technologies/languages/platforms see their relevant documentation.
 
+````javascript
+if (process.env.NGINX_VHOST_TRUSTPROXY) {
+  app.set('trust proxy', process.env.NGINX_VHOST_TRUSTPROXY);
+}
+````
 
 ## Credits
 
