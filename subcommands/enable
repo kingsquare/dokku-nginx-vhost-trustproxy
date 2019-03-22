@@ -25,7 +25,7 @@ nginx-vhost-trustproxy-enable-cmd() {
   verify_app_name "$2"
   local APP="$2";
 
-  depth=${3:-1}
+  local depth=${3:-1}
 
   if ! [[ $depth =~ ^[1-9]+$ ]]; then
     dokku_log_fail "Depth must be a positive integer for app ($APP)."
@@ -33,7 +33,7 @@ nginx-vhost-trustproxy-enable-cmd() {
   fi
 
   if [[ "$(is_app_proxy_enabled "$APP")" == "true" ]]; then
-    config_set $APP NGINX_VHOST_TRUSTPROXY=${expr ${depth} + 1}
+    config_set $APP NGINX_VHOST_TRUSTPROXY=`expr ${depth} + 1`
     nginx_build_config $APP
   else
     dokku_log_info1 "can not enable nginx-vhost-trustproxy as nginx support is disabled for app ($APP)."
