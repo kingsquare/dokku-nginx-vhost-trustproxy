@@ -15,13 +15,12 @@ nginx-vhost-trustproxy-hook-nginx-pre-reload() {
     sed -i 's/proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto/proxy_set_header X-Forwarded-Proto $scheme/g' $DOKKU_ROOT/$APP/nginx.conf
     sed -i 's/proxy_set_header X-Forwarded-For $http_x_forwarded_for/proxy_set_header X-Forwarded-For $remote_addr/g' $DOKKU_ROOT/$APP/nginx.conf
     sed -i 's/proxy_set_header X-Forwarded-Port $http_x_forwarded_porto/proxy_set_header X-Forwarded-Port $server_port/g' $DOKKU_ROOT/$APP/nginx.conf
-    exit 0;
+  else
+    dokku_log_info1 "Adding nginx-vhost-trustproxy configuration for app ($APP)."
+    sed -i 's/proxy_set_header X-Forwarded-Proto $scheme/proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto/g' $DOKKU_ROOT/$APP/nginx.conf
+    sed -i 's/proxy_set_header X-Forwarded-For $remote_addr/proxy_set_header X-Forwarded-For $http_x_forwarded_for/g' $DOKKU_ROOT/$APP/nginx.conf
+    sed -i 's/proxy_set_header X-Forwarded-Port $server_port/proxy_set_header X-Forwarded-Port $http_x_forwarded_porto/g' $DOKKU_ROOT/$APP/nginx.conf
   fi
-
-  dokku_log_info1 "Adding nginx-vhost-trustproxy configuration for app ($APP)."
-  sed -i 's/proxy_set_header X-Forwarded-Proto $scheme/proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto/g' $DOKKU_ROOT/$APP/nginx.conf
-  sed -i 's/proxy_set_header X-Forwarded-For $remote_addr/proxy_set_header X-Forwarded-For $http_x_forwarded_for/g' $DOKKU_ROOT/$APP/nginx.conf
-  sed -i 's/proxy_set_header X-Forwarded-Port $server_port/proxy_set_header X-Forwarded-Port $http_x_forwarded_porto/g' $DOKKU_ROOT/$APP/nginx.conf
 }
 
 nginx-vhost-trustproxy-hook-nginx-pre-reload $@
