@@ -33,7 +33,7 @@ nginx-vhost-trustproxy-enable-cmd() {
   fi
 
   if [[ "$(is_app_proxy_enabled "$APP")" == "true" ]]; then
-    config_set $APP NGINX_VHOST_TRUSTPROXY=${depth}
+    config_set $APP NGINX_VHOST_TRUSTPROXY=${expr ${depth} + 1}
     nginx_build_config $APP
   else
     dokku_log_info1 "can not enable nginx-vhost-trustproxy as nginx support is disabled for app ($APP)."
