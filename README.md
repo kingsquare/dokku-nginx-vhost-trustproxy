@@ -10,28 +10,29 @@ This enables allowing an application's dokku-host nginx-vhost to forward the cor
 ## Installation
 
     # on 0.4.x+
-    sudo dokku plugin:install https://github.com/kingsquare/dokku-nginx-vhost-trustproxy.git
+    sudo dokku plugin:install https://github.com/kingsquare/dokku-nginx-vhost-trustproxy.git#v0.0.1-alpha2
 
 ## Commands
 
 |Command|Description|
 |---|---|
-|`nginx-vhost-trustproxy:enable <app> [depth]`|Trust the nth hop from the dokku host as the client IP. Default is 1 so `proxy -> dokku-host -> app`. For each extra proxy increase the depth. This sets an environment proroperty `NGINX_VHOST_TRUSTPROXY` with the depth|
+|`nginx-vhost-trustproxy:enable <app> [depth]`|Trust the nth hop from the dokku host as the client IP. Default is 1 so `proxy -> dokku-host -> app`. For each extra proxy increase the depth. This sets an environment proroperty `NGINX_VHOST_TRUSTPROXY` with the depth + 1|
 |`nginx-vhost-trustproxy:disable <app>`|Disable trustproxy *This reverts to the default dokku behaviour.*|
 |`nginx-vhost-trustproxy:status <app>`|Get trustproxy status|
 
 ## Application usage
 
-Your app will be able to access the environment `NGINX_VHOST_TRUSTPROXY`. The value will be the trusted depth (including the dokku host). The left most IP according to your depth should be used as the Client/Remote IP.
+Your app will be able to access the environment `NGINX_VHOST_TRUSTPROXY`. The value will be the trusted depth (including the dokku host; i.e. 1 + 1). The left most IP according to your depth should be used as the Client/Remote IP.
 
-### node / express
+### expressjs example
+
 In your application you will have to use some kind of `trust proxy` to use the "correct" IP as the client IP. For example the `trust proxy` setting in [expressjs](https://expressjs.com/en/guide/behind-proxies.html). If you are not using express see the implementation in [proxy-addr](https://www.npmjs.com/package/proxy-addr). For other technologies/languages/platforms see their relevant documentation.
 
 ````javascript
-if (process.env.NGINX_VHOST_TRUSTPROXY) {
-  app.set('trust proxy', process.env.NGINX_VHOST_TRUSTPROXY);
-}
+  app.set('trust proxy', process.env.NGINX_VHOST_TRUSTPROXY || 1);
 ````
+
+This will trust either the configured depth of hops (including the dokku host) or just the one (to the dokku host).
 
 ## Credits
 
