@@ -24,6 +24,13 @@ This enables allowing an application's dokku-host nginx-vhost to forward the cor
 
 Your app will be able to access the environment `NGINX_VHOST_TRUSTPROXY`. The value will be the trusted depth (including the dokku host; i.e. 1 + 1). The left most IP according to your depth should be used as the Client/Remote IP.
 
+
+e.g.
+
+|Hop 0|Hop 1|Hop 2|
+|---|---|---|
+|`app` | `dokku-vhost` | `proxy` |
+
 ### expressjs example
 
 In your application you will have to use some kind of `trust proxy` to use the "correct" IP as the client IP. For example the `trust proxy` setting in [expressjs](https://expressjs.com/en/guide/behind-proxies.html). If you are not using express see the implementation in [proxy-addr](https://www.npmjs.com/package/proxy-addr). For other technologies/languages/platforms see their relevant documentation.
