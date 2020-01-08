@@ -3,9 +3,10 @@
 
 # dokku-nginx-vhost-trustproxy
 
-If your deployment architecture is `proxy* -> dokku-host -> app` then you most probably want the client's 
-remote IP within the app to actually be the correct client IP and not the IP of the known `proxy`. 
-This enables allowing an application's dokku-host nginx-vhost to forward the correct headers (`X-Forwarded-*`) from the [upstream proxy](http://tools.ietf.org/html/rfc2616#section-1.3) to the downstream app.
+If your deployment architecture is `proxy* -> dokku-host -> app` then you most probably want the client's
+remote IP within the app to actually be the correct client IP and not the IP of the known `proxy`.
+
+This plugin enables allowing an application's dokku-host nginx-vhost to forward the correct headers (`X-Forwarded-*`) from the [upstream proxy](http://tools.ietf.org/html/rfc2616#section-1.3) to the downstream app.
 
 ## Installation
 
@@ -16,14 +17,13 @@ This enables allowing an application's dokku-host nginx-vhost to forward the cor
 
 |Command|Description|
 |---|---|
-|`nginx-vhost-trustproxy:enable <app> [depth]`|Trust the nth hop from the dokku host as the client IP. Default is 1 so `proxy -> dokku-host -> app`. For each extra proxy increase the depth. This sets an environment proroperty `NGINX_VHOST_TRUSTPROXY` with the depth + 1|
+|`nginx-vhost-trustproxy:enable <app> [depth]`|Trust the nth hop from the dokku host as the client IP. Default is 1 so `dokku-host -> app`. For each extra proxy increase the depth. This sets an environment property `NGINX_VHOST_TRUSTPROXY` with the depth + 1|
 |`nginx-vhost-trustproxy:disable <app>`|Disable trustproxy *This reverts to the default dokku behaviour.*|
 |`nginx-vhost-trustproxy:status <app>`|Get trustproxy status|
 
 ## Application usage
 
 Your app will be able to access the environment `NGINX_VHOST_TRUSTPROXY`. The value will be the trusted depth (including the dokku host; i.e. 1 + 1). The left most IP according to your depth should be used as the Client/Remote IP.
-
 
 e.g.
 
