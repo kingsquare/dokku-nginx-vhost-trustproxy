@@ -9,6 +9,15 @@ nginx-vhost-trustproxy-hook-nginx-pre-reload() {
   verify_app_name "$1"
   local APP="$1";
 
+  local ALLOW_PROXY_PROTOCOL=$(config_get $APP ALLOW_PROXY_PROTOCOL $(config_get ALLOW_PROXY_PROTOCOL))
+  if [[ "$ALLOW_PROXY_PROTOCOL" = "" ]]; then
+    sed -i 's/listen      80;listen      80 proxy_protocol;/g' $DOKKU_ROOT/$APP/nginx.conf
+    sed -i 's/listen      443 ssl;listen      443 ssl proxy_protocol;/g' $DOKKU_ROOT/$APP/nginx.conf
+  else
+    sed -i 's/listen      80 proxy_protocol;listen      80;/g' $DOKKU_ROOT/$APP/nginx.conf
+    sed -i 's/listen      443 ssl proxy_protocol;listen      443 ssl;/g' $DOKKU_ROOT/$APP/nginx.conf
+  fi
+
   local NGINX_VHOST_TRUSTPROXY=$(config_get $APP NGINX_VHOST_TRUSTPROXY)
   if [[ "$NGINX_VHOST_TRUSTPROXY" = "" ]]; then
     # revert back to the original
