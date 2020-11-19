@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+source "$PLUGIN_AVAILABLE_PATH/nginx-vhost-trustproxy/internal-functions"
+[[ " $(nginx-vhost-trustproxy-plugin-name):status " == *" $1 "* ]] || exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/config/functions"
+source "$PLUGIN_AVAILABLE_PATH/proxy/functions"
+source "$PLUGIN_AVAILABLE_PATH/nginx-vhosts/functions"
+
+nginx-vhost-trustproxy-status-cmd() {
+  declare desc="Show the nginx-vhost-trustproxy status"
+  local cmd="nginx-vhost-trustproxy:status"
+
+  # Support --app/$DOKKU_APP_NAME flag
+  # Use the following lines to reorder args into "$cmd $DOKKU_APP_NAME $@""
+  local argv=("$@")
+  [[ ${argv[0]} == "$cmd" ]] && shift 1
+  [[ -n $DOKKU_APP_NAME ]] && set -- $DOKKU_APP_NAME $@
+  set -- $cmd $@
+  ##
+
+  [[ -z $2 ]] && dokku_log_fail "Please specify an app to run the command on"
+  verify_app_name "$2"
+  local APP="$2";
+
+  if [[ "$(is_app_proxy_enabled "$APP")" == "true" ]]; then
+    dokku_log_info1 "nginx-vhost-trustproxy is ENABLED for app ($APP)."
+  else
+    dokku_log_info1 "nginx-vhost-trustproxy is DISABLED for app ($APP)."
+  fi
+}
+
+nginx-vhost-trustproxy-status-cmd "$@"

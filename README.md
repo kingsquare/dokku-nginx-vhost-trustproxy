@@ -19,7 +19,7 @@ This plugin enables allowing an application's dokku-host nginx-vhost to forward 
 |---|---|
 |`nginx-vhost-trustproxy:enable <app> [depth]`|Trust the nth hop from the dokku host as the client IP. Default is 1 so `dokku-host -> app`. For each extra proxy increase the depth. This sets an environment property `NGINX_VHOST_TRUSTPROXY` with the depth + 1|
 |`nginx-vhost-trustproxy:disable <app>`|Disable trustproxy *This reverts to the default dokku behaviour.*|
-|`nginx-vhost-trustproxy:status <app>`|Get trustproxy status|
+|`nginx-vhost-trustproxy:status <app>`|Get trustproxy status (if its enabled / disabled) |
 
 ## Application usage
 
