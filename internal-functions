@@ -6,11 +6,6 @@ nginx-vhost-trustproxy-plugin-name() {
    echo "nginx-vhost-trustproxy"
 }
 
-nginx-vhost-trustproxy-plugin-cmd-prefix() {
-  # TODO replace with a sed?
-  echo "nginx-vhost-trustproxy"
-}
-
 nginx-vhost-trustproxy-help-content() {
   local PLUGIN_NAME=$(nginx-vhost-trustproxy-plugin-name)
   declare desc="return nginx plugin help content"
@@ -23,7 +18,6 @@ help_content
 
 nginx-vhost-trustproxy-help() {
   local PLUGIN_NAME=$(nginx-vhost-trustproxy-plugin-name)
-  local CMD_PREFIX=$(nginx-vhost-trustproxy-plugin-name)
   local HELP_CMD=$(nginx-vhost-trustproxy-plugin-name)-help-content
   if [[ $1 == "${PLUGIN_NAME}:help" ]]; then
     echo -e 'Usage: dokku ${PLUGIN_NAME}[:COMMAND]'
